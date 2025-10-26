@@ -8,7 +8,7 @@ class PaymentMethodItem extends StatelessWidget {
     required this.paymentCard,
     required this.onItemTapped,
   });
-  final PaymentCartModel paymentCard;
+  final PaymentCardModel paymentCard;
   final VoidCallback onItemTapped;
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class PaymentMethodItem extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           color: AppColor.white,
-          border: Border.all(color: AppColor.grey),
+          border: Border.all(color: AppColor.grey3),
         ),
         child: ListTile(
           leading: Image.asset(

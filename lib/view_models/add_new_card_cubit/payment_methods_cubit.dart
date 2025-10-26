@@ -3,10 +3,10 @@
 import 'package:animation_project/models/payment_cart_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-part 'add_new_card_state.dart';
+part 'payment_method_state.dart';
 
-class AddNewCardCubit extends Cubit<AddNewCardState> {
-  AddNewCardCubit() : super(AddNewCardInitial());
+class PaymentMethodsCubit extends Cubit<PaymentMethodsState> {
+  PaymentMethodsCubit() : super(PaymentMethodsInitial());
 
   Future<void> addNewCard(
     String cardNumber,
@@ -18,7 +18,7 @@ class AddNewCardCubit extends Cubit<AddNewCardState> {
       emit(AddNewCardLoading());
 
       // إنشاء الكرت الجديد
-      final newCard = PaymentCartModel(
+      final newCard = PaymentCardModel(
         id: DateTime.now().toIso8601String(),
         cardNumber: cardNumber,
         cardHolderName: cardHolderName,
@@ -39,6 +39,24 @@ class AddNewCardCubit extends Cubit<AddNewCardState> {
       emit(AddNewCardFailure(errorMessage: e.toString()));
     }
   }
+
+void fetchPaymentMethods(){
+  emit(FetchingPaymentMethods());
+  Future.delayed(
+const Duration(
+    seconds: 1,
+   
+  ),
+  (){
+    if(dummyPaymentCards.isEmpty){
+      emit(FetchedPaymentMethods(paymentCards: dummyPaymentCards));
+    }
+    else{FetchingPaymentMethodsError(errorMessage: "No payment Method found");}
+  }
+  );
+  
+}
+
 }
 
 

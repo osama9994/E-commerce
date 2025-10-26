@@ -1,4 +1,4 @@
-import 'package:animation_project/view_models/add_new_card_cubit/add_new_card_cubit.dart';
+import 'package:animation_project/view_models/add_new_card_cubit/payment_methods_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:animation_project/utils/app_color.dart';
 import 'package:animation_project/views/widgets/label_with_textfield_new_card.dart';
@@ -19,7 +19,7 @@ class _AddNewCardPageState extends State<AddNewCardPage> {
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    final cubit = BlocProvider.of<AddNewCardCubit>(context);
+    final cubit = BlocProvider.of<PaymentMethodsCubit>(context);
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(title: const Text("Add New Card")),
@@ -76,7 +76,7 @@ class _AddNewCardPageState extends State<AddNewCardPage> {
               SizedBox(
                 width: double.infinity,
                 height: 60,
-                child: BlocConsumer<AddNewCardCubit, AddNewCardState>(
+                child: BlocConsumer<PaymentMethodsCubit, PaymentMethodsState>(
                   bloc: cubit,
                   listenWhen:(previous, current) => current is AddNewCardFailure|| current is AddNewCardSuccess ,
                   listener: (context, state){

@@ -1,5 +1,5 @@
 import 'package:animation_project/utils/app_routes.dart';
-import 'package:animation_project/view_models/add_new_card_cubit/add_new_card_cubit.dart';
+import 'package:animation_project/view_models/add_new_card_cubit/payment_methods_cubit.dart';
 import 'package:animation_project/view_models/product_details_cubit/product_details_cubit.dart';
 import 'package:animation_project/views/pages/add_new_card_page.dart';
 import 'package:animation_project/views/pages/checkout_page.dart';
@@ -20,7 +20,7 @@ class AppRouter {
         return MaterialPageRoute(
           builder:
               (_) => BlocProvider(
-                create: (context) => AddNewCardCubit(),
+                create: (context) => PaymentMethodsCubit(),
                 child: const AddNewCardPage(),
               ),
           settings: settings,

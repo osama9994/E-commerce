@@ -1,17 +1,39 @@
 import 'package:animation_project/models/payment_cart_model.dart';
 import 'package:animation_project/utils/app_color.dart';
+import 'package:animation_project/view_models/add_new_card_cubit/payment_methods_cubit.dart';
 import 'package:animation_project/view_models/checkout_cubit/checkout_cubit.dart';
 import 'package:animation_project/views/widgets/checkout_headlines_item.dart';
 import 'package:animation_project/views/widgets/empty_shipping_payment.dart';
+import 'package:animation_project/views/widgets/payment_method_bottom_sheet.dart';
 import 'package:animation_project/views/widgets/payment_method_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CheckoutPage extends StatelessWidget {
   const CheckoutPage({super.key});
-Widget _buildPaymentMethodItem(PaymentCartModel? chosenCard){
+Widget _buildPaymentMethodItem(PaymentCardModel? chosenCard, BuildContext context){
   if(chosenCard !=null){
-   return PaymentMethodItem(paymentCard: chosenCard,onItemTapped:() {},);
+   return PaymentMethodItem(paymentCard: chosenCard,onItemTapped:() {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context, builder: (_){
+     return SizedBox(
+      
+      width: double.infinity,
+      height: 500,
+      child: BlocProvider(
+        create: (context) {
+          final cubit=PaymentMethodsCubit();
+          cubit.fetchPaymentMethods();
+          return cubit;
+        },
+        child:  PaymentMethodBottomSheet(),
+      ),
+      );
+    }
+    );
+   },
+   );
   }else{
    return  const EmptyShippingAndPayment(title: "Add Payment Method");
   }
@@ -150,7 +172,7 @@ Widget _buildPaymentMethodItem(PaymentCartModel? chosenCard){
                             const SizedBox(height: 16,),
                             CheckoutHeadlinesItem(title: "Payment Methods", onTap: () {}),
                             const SizedBox(height: 16,),
-                            _buildPaymentMethodItem(chosenPaymentCard),
+                            _buildPaymentMethodItem(chosenPaymentCard,context),
                             Divider(color: AppColor.grey2),
                             const SizedBox(height: 16,),
                             Row(
