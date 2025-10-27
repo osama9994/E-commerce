@@ -1,13 +1,13 @@
-
-
 import 'package:animation_project/models/payment_cart_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'payment_method_state.dart';
 
+// Cubit لإدارة البطاقات
 class PaymentMethodsCubit extends Cubit<PaymentMethodsState> {
   PaymentMethodsCubit() : super(PaymentMethodsInitial());
 
+  // إضافة بطاقة جديدة
   Future<void> addNewCard(
     String cardNumber,
     String cardHolderName,
@@ -17,7 +17,6 @@ class PaymentMethodsCubit extends Cubit<PaymentMethodsState> {
     try {
       emit(AddNewCardLoading());
 
-      // إنشاء الكرت الجديد
       final newCard = PaymentCardModel(
         id: DateTime.now().toIso8601String(),
         cardNumber: cardNumber,
@@ -26,68 +25,26 @@ class PaymentMethodsCubit extends Cubit<PaymentMethodsState> {
         cvv: cvv,
       );
 
-      // تأخير بسيط لمحاكاة عملية حفظ أو استدعاء API
       await Future.delayed(const Duration(seconds: 1));
 
-      // إضافة البطاقة إلى القائمة التجريبية
       dummyPaymentCards.add(newCard);
 
-      // نجاح العملية
       emit(AddNewCardSuccess());
     } catch (e) {
-      // في حال وجود خطأ
       emit(AddNewCardFailure(errorMessage: e.toString()));
     }
   }
 
-void fetchPaymentMethods(){
-  emit(FetchingPaymentMethods());
-  Future.delayed(
-const Duration(
-    seconds: 1,
-   
-  ),
-  (){
-    if(dummyPaymentCards.isEmpty){
-      emit(FetchedPaymentMethods(paymentCards: dummyPaymentCards));
-    }
-    else{FetchingPaymentMethodsError(errorMessage: "No payment Method found");}
+  // جلب البطاقات
+  void fetchPaymentMethods() {
+    emit(FetchingPaymentMethods());
+
+    Future.delayed(const Duration(seconds: 1), () {
+      if (dummyPaymentCards.isNotEmpty) {
+        emit(FetchedPaymentMethods(paymentCards: dummyPaymentCards));
+      } else {
+        emit(FetchingPaymentMethodsError(errorMessage: "No payment method found"));
+      }
+    });
   }
-  );
-  
 }
-
-}
-
-
-
-// import 'package:animation_project/models/payment_cart_model.dart';
-
-// import 'package:flutter_bloc/flutter_bloc.dart';
-
-
-// part 'add_new_card_state.dart';
-
-// class AddNewCardCubit extends Cubit<AddNewCardState> {
-//   AddNewCardCubit() : super(AddNewCardInitial());
-
-// void addNewCard(String cardNumber, String cardHolderName,String expiryDate,String cvv){
-//   emit(AddNewCardLoading());
-// PaymentCartModel newCard=PaymentCartModel(
-//   id: DateTime.now().toIso8601String(),
-//   cardNumber: cardNumber,
-//   cardHolderName: cardHolderName,
-//   expiryDate: expiryDate,
-//   cvv: cvv,
-//   );
-//   Future.delayed(
-//    const Duration(seconds: 1),(){
-//       dummyPaymentCards.add(newCard);
-//       emit(AddNewCardSuccess());
-//     }
-//   );
-// dummyPaymentCards.add(newCard);
-//   emit(AddNewCardSuccess());
-// }
-
-// }
