@@ -1,13 +1,14 @@
 import 'package:animation_project/models/payment_cart_model.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'payment_method_state.dart';
 
-// Cubit لإدارة البطاقات
+
 class PaymentMethodsCubit extends Cubit<PaymentMethodsState> {
   PaymentMethodsCubit() : super(PaymentMethodsInitial());
 
-  // إضافة بطاقة جديدة
+
   Future<void> addNewCard(
     String cardNumber,
     String cardHolderName,
@@ -35,7 +36,7 @@ class PaymentMethodsCubit extends Cubit<PaymentMethodsState> {
     }
   }
 
-  // جلب البطاقات
+  
   void fetchPaymentMethods() {
     emit(FetchingPaymentMethods());
 
@@ -47,4 +48,17 @@ class PaymentMethodsCubit extends Cubit<PaymentMethodsState> {
       }
     });
   }
+
+void changePaymentMethod(String id){
+var chosenPaymentMethod=
+dummyPaymentCards.firstWhere((paymentCard)=>paymentCard.id==id);
+var previousPaymentMethod=
+dummyPaymentCards.firstWhere((paymentCard)=>paymentCard.isChosen==true);
+previousPaymentMethod=previousPaymentMethod.copyWith(isChosen: false);
+previousPaymentMethod=chosenPaymentMethod.copyWith(isChosen: true);
+emit(PaymentMethodChosen(chosenPaymentMethod));
+
+
+}
+
 }

@@ -1,4 +1,3 @@
-
 import 'package:animation_project/utils/app_color.dart';
 import 'package:animation_project/view_models/add_new_card_cubit/payment_methods_cubit.dart';
 import 'package:animation_project/views/widgets/main_botton.dart';
@@ -15,7 +14,12 @@ class PaymentMethodBottomSheet extends StatelessWidget {
     return SingleChildScrollView(
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.only(left: 16, right: 16, top: 36, bottom: 16),
+          padding: const EdgeInsets.only(
+            left: 16,
+            right: 16,
+            top: 36,
+            bottom: 16,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -27,24 +31,25 @@ class PaymentMethodBottomSheet extends StatelessWidget {
 
               BlocBuilder<PaymentMethodsCubit, PaymentMethodsState>(
                 bloc: paymentMethodsCubit,
-                buildWhen: (previous, current) =>
-                    current is FetchingPaymentMethods ||
-                    current is FetchedPaymentMethods ||
-                    current is FetchingPaymentMethodsError,
+                buildWhen:
+                    (previous, current) =>
+                        current is FetchingPaymentMethods ||
+                        current is FetchedPaymentMethods ||
+                        current is FetchingPaymentMethodsError,
                 builder: (_, state) {
                   if (state is FetchingPaymentMethods) {
                     return const Center(
                       child: CircularProgressIndicator.adaptive(),
                     );
                   } else if (state is FetchedPaymentMethods) {
-                    final paymentCards = state.paymentCards;
+                    final paymentCard = state.paymentCards;
 
                     return ListView.builder(
                       shrinkWrap: true,
-                      itemCount: paymentCards.length,
+                      itemCount: paymentCard.length,
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (_, index) {
-                        final card = paymentCards[index];
+                        final card = paymentCard[index];
                         return Card(
                           elevation: 0,
                           child: ListTile(
@@ -54,7 +59,10 @@ class PaymentMethodBottomSheet extends StatelessWidget {
                                 color: AppColor.grey2,
                               ),
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 8,
+                                ),
                                 child: Image.asset(
                                   "images/mastercard_logo.png",
                                   width: 50,
@@ -64,9 +72,36 @@ class PaymentMethodBottomSheet extends StatelessWidget {
                               ),
                             ),
                             title: Text(card.cardNumber),
+
                             subtitle: Text(card.cardHolderName),
+                            trailing: BlocBuilder<
+                              PaymentMethodsCubit,
+                              PaymentMethodsState
+                            >(
+                              bloc: paymentMethodsCubit,
+                              buildWhen:
+                                  (previous, current) =>
+                                      current is PaymentMethodChosen,
+                              builder: (context, state) {
+                                if (state is PaymentMethodChosen) {
+                                  final chosenPaymentMethod =
+                                      state.chosenPayment;
+                                  return Radio<String>(
+                                    value: card.id,
+                                    groupValue: chosenPaymentMethod.id,
+                                    onChanged: (id) {
+                                      paymentMethodsCubit.changePaymentMethod(
+                                        id!,
+                                      );
+                                    },
+                                  );
+                                } else {
+                                  return const SizedBox();
+                                }
+                              },
+                            ),
                             onTap: () {
-                              Navigator.of(context).pop(card); // تعيد البطاقة المختارة
+                              Navigator.of(context).pop(card);
                             },
                           ),
                         );
@@ -111,10 +146,7 @@ class PaymentMethodBottomSheet extends StatelessWidget {
 
               const SizedBox(height: 24),
 
-              MainBotton(
-                text: "Confirm Payment",
-                onTap: () {},
-              ),
+              MainBotton(text: "Confirm Payment", onTap: () {}),
             ],
           ),
         ),
@@ -122,8 +154,3 @@ class PaymentMethodBottomSheet extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
