@@ -49,10 +49,15 @@ class PaymentMethodBottomSheet extends StatelessWidget {
                       itemCount: paymentCard.length,
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (_, index) {
-                        final card = paymentCard[index];
+                        final paymentcard = paymentCard[index];
                         return Card(
                           elevation: 0,
                           child: ListTile(
+                            onTap: () {
+                              paymentMethodsCubit.changePaymentMethod(
+                                paymentcard.id,
+                              );
+                            },
                             leading: DecoratedBox(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(16),
@@ -71,9 +76,9 @@ class PaymentMethodBottomSheet extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            title: Text(card.cardNumber),
+                            title: Text(paymentcard.cardNumber),
 
-                            subtitle: Text(card.cardHolderName),
+                            subtitle: Text(paymentcard.cardHolderName),
                             trailing: BlocBuilder<
                               PaymentMethodsCubit,
                               PaymentMethodsState
@@ -87,7 +92,7 @@ class PaymentMethodBottomSheet extends StatelessWidget {
                                   final chosenPaymentMethod =
                                       state.chosenPayment;
                                   return Radio<String>(
-                                    value: card.id,
+                                    value: paymentcard.id,
                                     groupValue: chosenPaymentMethod.id,
                                     onChanged: (id) {
                                       paymentMethodsCubit.changePaymentMethod(
@@ -100,9 +105,6 @@ class PaymentMethodBottomSheet extends StatelessWidget {
                                 }
                               },
                             ),
-                            onTap: () {
-                              Navigator.of(context).pop(card);
-                            },
                           ),
                         );
                       },
@@ -146,7 +148,38 @@ class PaymentMethodBottomSheet extends StatelessWidget {
 
               const SizedBox(height: 24),
 
-              MainBotton(text: "Confirm Payment", onTap: () {}),
+              BlocConsumer<PaymentMethodsCubit, PaymentMethodsState>(
+                bloc: paymentMethodsCubit,
+                listenWhen:(previous, current) => current is ConfirmPaymentSuccess,
+                buildWhen:
+                    (previous, current) =>
+                        current is ConfirmPaymentLoading ||
+                        current is ConfirmPaymentSuccess ||
+                        current is ConfirmPaymentFailure,
+                        listener:(context, state) => {
+                          if(state is ConfirmPaymentSuccess){
+                            Navigator.of(context).pop()
+                          },
+                        },
+                builder: (context, state) {
+                  if(state is ConfirmPaymentLoading){
+                   return MainBotton(
+                    isLoading: true,
+                    onTap: null,
+
+                  );
+                  }
+                     return MainBotton(
+                    text: "Confirm Payment",
+                    onTap: () {
+                      paymentMethodsCubit.confirmPaymentMethod();
+                    },
+                  );
+
+                  
+                 
+                },
+              ),
             ],
           ),
         ),

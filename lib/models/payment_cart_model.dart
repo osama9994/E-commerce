@@ -33,29 +33,29 @@ class PaymentCardModel {
     );
   }
 }
-
- List<PaymentCardModel>dummyPaymentCards=[
-
-PaymentCardModel(
-  id: "1",
-   cardNumber: "123 345 5657",
-    cardHolderName: "sama alshalbe",
-     expiryDate: "12/34",
-      cvv: "123",
-      ),
-PaymentCardModel(
-  id: "1",
-   cardNumber: "123 3455 557",
-    cardHolderName: "osa alshalbe",
-     expiryDate: "12/34",
-      cvv: "123",
-      ),
-PaymentCardModel(
-  id: "1",
-   cardNumber: "123 3455 5657",
-    cardHolderName: "osama alshalbe",
-     expiryDate: "12/34",
-      cvv: "123",
-      ),
-
- ];
+List<PaymentCardModel> dummyPaymentCards = [
+  PaymentCardModel(
+    id: '1',
+    cardNumber: '**** **** **** 1234',
+    cardHolderName: 'John Doe',
+    expiryDate: '12/25',
+    cvv: '123',
+    isChosen: true, 
+  ),
+  PaymentCardModel(
+    id: '2',
+    cardNumber: '**** **** **** 5678',
+    cardHolderName: 'Jane Smith',
+    expiryDate: '11/24',
+    cvv: '456',
+    isChosen: false,
+  ),
+  PaymentCardModel(
+    id: '3',
+    cardNumber: '**** **** **** 9012',
+    cardHolderName: 'Alice Johnson',
+    expiryDate: '10/26',
+    cvv: '789',
+    isChosen: false,
+  ),
+];
