@@ -35,7 +35,7 @@ Widget _buildPaymentMethodItem(PaymentCardModel? chosenCard, BuildContext contex
    },
    );
   }else{
-   return  const EmptyShippingAndPayment(title: "Add Payment Method");
+   return  const EmptyShippingAndPayment(title: "Add Payment Method",isPayment: true,);
   }
 }
   @override
@@ -74,7 +74,9 @@ Widget _buildPaymentMethodItem(PaymentCardModel? chosenCard, BuildContext contex
                           children: [
                             CheckoutHeadlinesItem(title: "Address", onTap: () {}),
                             const SizedBox(height: 16,),
-                            const EmptyShippingAndPayment(title: "Add shipping Address"),
+                            const EmptyShippingAndPayment(title: "Add shipping Address"
+                            ,isPayment: false,
+                            ),
                             const SizedBox(height: 16,),
                             CheckoutHeadlinesItem(
                               title: "Products",

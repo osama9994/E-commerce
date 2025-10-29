@@ -3,6 +3,7 @@ import 'package:animation_project/view_models/add_new_card_cubit/payment_methods
 import 'package:animation_project/view_models/product_details_cubit/product_details_cubit.dart';
 import 'package:animation_project/views/pages/add_new_card_page.dart';
 import 'package:animation_project/views/pages/checkout_page.dart';
+import 'package:animation_project/views/pages/choose_location_page.dart';
 import 'package:animation_project/views/pages/custom_bottom_navbar.dart';
 import 'package:animation_project/views/pages/product_details_page.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +30,11 @@ class AppRouter {
       case AppRoutes.checkoutRoute:
         return MaterialPageRoute(
           builder: (_) => const CheckoutPage(),
+          settings: settings,
+        );
+      case AppRoutes.chooseLoacation:
+        return MaterialPageRoute(
+          builder: (_) => const ChooseLocationPage(),
           settings: settings,
         );
 
