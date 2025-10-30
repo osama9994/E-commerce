@@ -31,6 +31,7 @@ Widget _buildPaymentMethodItem(PaymentCardModel? chosenCard, BuildContext contex
       ),
       );
     }
+    // ignore: use_build_context_synchronously
     ).then((value)=>BlocProvider.of<CheckoutCubit>(context).getCartItem());
    },
    );
