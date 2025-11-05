@@ -5,15 +5,16 @@ import 'package:animation_project/views/widgets/main_botton.dart';
 import 'package:animation_project/views/widgets/social_media_botton.dart';
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   final emailController = TextEditingController();
+  final usernameController = TextEditingController();
   final passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   @override
@@ -30,19 +31,26 @@ class _LoginPageState extends State<LoginPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 50),
-                  Text("Login Account", style: TextTheme.of(context).titleLarge),
+                  Text("Create Account", style: TextTheme.of(context).titleLarge),
                   const SizedBox(height: 8),
                   Text(
-                    "Please Login with registered account",
+                    "Start shopping with create your account",
                     style: TextTheme.of(
                       context,
                     ).labelLarge!.copyWith(color: AppColor.grey),
                   ),
                   const SizedBox(height: 8),
                   LabelWithTextfield(
+                    label: "Username",
+                    prefixIcon: Icons.person,
+                    hintText: "Enter your username",
+                    controller: usernameController,
+                  ),
+                  const SizedBox(height: 8),
+                  LabelWithTextfield(
                     label: "Email",
-                    prefixIcon: Icons.email,
-                    hintText: "Enter your email",
+                    prefixIcon: Icons.person,
+                    hintText: "Enter your Email",
                     controller: emailController,
                   ),
                   const SizedBox(height: 24),
@@ -55,22 +63,11 @@ class _LoginPageState extends State<LoginPage> {
                     controller: passwordController,
                   ),
               
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {},
-                      child: Text(
-                        "Forgot Password?",
-                        style: TextTheme.of(
-                          context,
-                        ).labelLarge!.copyWith(color: AppColor.primary),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  MainBotton(text: "Lgoin", onTap: () {
+                 
+                  const SizedBox(height: 40),
+                  MainBotton(text: "Create Account", onTap: () {
                     if(_formKey.currentState!.validate()){
-                      Navigator.pushNamed(context, AppRoutes.homeRoute);
+                       Navigator.pushNamed(context, AppRoutes.homeRoute);
                     }
                   }),
                   const SizedBox(height: 8),
@@ -80,10 +77,10 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         TextButton(
                           onPressed: () {
-                            Navigator.pushNamed(context, AppRoutes.registerRoute);
+                            Navigator.pop(context);
                           },
                           child: Text(
-                            "Don't have an account? Register",
+                            "You have an account? Login",
                             style: TextTheme.of(
                               context,
                             ).labelLarge!.copyWith(color: AppColor.primary),
@@ -99,13 +96,13 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         const SizedBox(height: 16),
                         SocialMediaBotton(
-                          text: "Login with Google",
+                          text: "Sign up with Google",
                           icon: Icons.g_mobiledata,
                           ontap: () {},
                         ),
                         const SizedBox(height: 16),
                         SocialMediaBotton(
-                          text: "Login with Facebook",
+                          text: "Sign up with Facebook",
                          icon: Icons.facebook,
                           ontap: () {},
                         ),
