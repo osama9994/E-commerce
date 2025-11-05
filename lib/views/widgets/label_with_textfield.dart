@@ -1,25 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:animation_project/utils/app_color.dart';
 
-class LabelWithTextfieldNewCard extends StatefulWidget {
+class LabelWithTextfield extends StatefulWidget {
   final String label;
-  final IconData icon;
+  final IconData prefixIcon;
+  final Widget? suffixIcon;
   final String hintText;
   final TextEditingController controller;
+  final bool obscureText;
 
-  const LabelWithTextfieldNewCard({
+  const LabelWithTextfield({
     super.key,
     required this.label,
-    required this.icon,
+    required this.prefixIcon,
     required this.hintText,
-    required this.controller,
+    required this.controller, 
+    this.suffixIcon,
+     this.obscureText=false,
   });
 
   @override
-  State<LabelWithTextfieldNewCard> createState() => _LabelWithTextfieldNewCardState();
+  State<LabelWithTextfield> createState() => _LabelWithTextfieldState();
 }
 
-class _LabelWithTextfieldNewCardState extends State<LabelWithTextfieldNewCard> {
+class _LabelWithTextfieldState extends State<LabelWithTextfield> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -36,8 +40,11 @@ class _LabelWithTextfieldNewCardState extends State<LabelWithTextfieldNewCard> {
           validator:(value) => value==null||value.isEmpty?"${widget.label} Can not be Empty":null ,
           
           controller: widget.controller,
+          obscureText: widget.obscureText,
           decoration: InputDecoration(
-            prefixIcon: Icon(widget.icon),
+            prefixIcon: Icon(widget.prefixIcon),
+            suffixIcon: widget.suffixIcon,
+            suffixIconColor: AppColor.grey,
             hintText: widget.hintText,
             fillColor: AppColor.grey1,
             filled: true,

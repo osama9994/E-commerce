@@ -1,7 +1,7 @@
 import 'package:animation_project/view_models/add_new_card_cubit/payment_methods_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:animation_project/utils/app_color.dart';
-import 'package:animation_project/views/widgets/label_with_textfield_new_card.dart';
+import 'package:animation_project/views/widgets/label_with_textfield.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddNewCardPage extends StatefulWidget {
@@ -35,33 +35,33 @@ class _AddNewCardPageState extends State<AddNewCardPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        LabelWithTextfieldNewCard(
+                        LabelWithTextfield(
                           label: "Card Number",
-                          icon: Icons.credit_card,
+                          prefixIcon: Icons.credit_card,
                           hintText: "Enter card number",
                           controller: _cardNumberController,
                         ),
                         const SizedBox(height: 24),
 
-                        LabelWithTextfieldNewCard(
+                        LabelWithTextfield(
                           label: "Card Holder Name",
-                          icon: Icons.person,
+                          prefixIcon: Icons.person,
                           hintText: "Enter card holder name",
                           controller: _cardHolderController,
                         ),
                         const SizedBox(height: 24),
 
-                        LabelWithTextfieldNewCard(
+                        LabelWithTextfield(
                           label: "Expiry Date",
-                          icon: Icons.calendar_month,
+                          prefixIcon: Icons.calendar_month,
                           hintText: "Enter expiry date",
                           controller: _expiryDateController,
                         ),
                         const SizedBox(height: 24),
 
-                        LabelWithTextfieldNewCard(
+                        LabelWithTextfield(
                           label: "CVV",
-                          icon: Icons.lock,
+                          prefixIcon: Icons.lock,
                           hintText: "Enter CVV",
                           controller: _cvvController,
                         ),

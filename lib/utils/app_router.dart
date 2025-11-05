@@ -6,6 +6,7 @@ import 'package:animation_project/views/pages/add_new_card_page.dart';
 import 'package:animation_project/views/pages/checkout_page.dart';
 import 'package:animation_project/views/pages/choose_location_page.dart';
 import 'package:animation_project/views/pages/custom_bottom_navbar.dart';
+import 'package:animation_project/views/pages/login_page.dart';
 import 'package:animation_project/views/pages/product_details_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,6 +17,11 @@ class AppRouter {
       case AppRoutes.homeRoute:
         return MaterialPageRoute(
           builder: (_) => const CustomBottomNavbar(),
+          settings: settings,
+        );
+      case AppRoutes.loginRoute:
+        return MaterialPageRoute(
+          builder: (_) => const LoginPage(),
           settings: settings,
         );
       case AppRoutes.addNewCardRoute:
