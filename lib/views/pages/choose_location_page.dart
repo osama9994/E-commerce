@@ -1,5 +1,6 @@
 import 'package:animation_project/utils/app_color.dart';
 import 'package:animation_project/view_models/choose_location_cubit/choose_location_cubit.dart';
+import 'package:animation_project/views/widgets/location_item_widget.dart';
 import 'package:animation_project/views/widgets/main_botton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -40,42 +41,48 @@ class _ChooseLocationPageState extends State<ChooseLocationPage> {
                 ),
                 const SizedBox(height: 36),
                 TextField(
-                   controller: locationcontroller,
+                  controller: locationcontroller,
                   decoration: InputDecoration(
                     prefixIcon: Icon(Icons.location_on),
-                    suffixIcon: BlocConsumer<ChooseLocationCubit, ChooseLocationState>(
-                      
-                      bloc: cubit,
-                      listenWhen: (previous, current) => current is LocationAdded,
-                      listener: (context, state) {
-                        if(state is LocationAdded){
-                          locationcontroller.clear();
-                        }
-                      },
-                      buildWhen: (previous, current) => current is AddingLocation||current is LocationAdded||current is LocationAddednFailure,
-                      builder: (context, state) {
-                        if(state is AddingLocation){
-                          return Center( 
-                            child: CircularProgressIndicator.adaptive(
-                              backgroundColor: AppColor.grey,
-                            ),
-                            
-                            );
-                        }
-                        return IconButton(
-                          icon: Icon(Icons.add),
-                          onPressed: () {
-                            if (locationcontroller.text.isNotEmpty) {
-                              cubit.addLocaton(locationcontroller.text);
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text("Enter a location")),
-                              );
+                    suffixIcon:
+                        BlocConsumer<ChooseLocationCubit, ChooseLocationState>(
+                          bloc: cubit,
+                          listenWhen:
+                              (previous, current) => current is LocationAdded || current is ConfrimAdressLoaded,
+                          listener: (context, state) {
+                            if (state is LocationAdded) {
+                              locationcontroller.clear();
+                            }else if(state is ConfrimAdressLoaded) {
+                             Navigator.pop(context);
                             }
                           },
-                        );
-                      },
-                    ),
+                          buildWhen:
+                              (previous, current) =>
+                                  current is AddingLocation ||
+                                  current is LocationAdded ||
+                                  current is LocationAddednFailure,
+                          builder: (context, state) {
+                            if (state is AddingLocation) {
+                              return Center(
+                                child: CircularProgressIndicator.adaptive(
+                                  backgroundColor: AppColor.grey,
+                                ),
+                              );
+                            }
+                            return IconButton(
+                              icon: Icon(Icons.add),
+                              onPressed: () {
+                                if (locationcontroller.text.isNotEmpty) {
+                                  cubit.addLocaton(locationcontroller.text);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text("Enter a location")),
+                                  );
+                                }
+                              },
+                            );
+                          },
+                        ),
 
                     hintText: "Enter location: city-country ",
                     fillColor: AppColor.grey1,
@@ -116,62 +123,38 @@ class _ChooseLocationPageState extends State<ChooseLocationPage> {
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
-                          final lacation = locations[index];
+                          final location = locations[index];
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 16),
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: AppColor.grey),
-
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          lacation.city,
-                                          style:
-                                              Theme.of(
-                                                context,
-                                              ).textTheme.titleMedium,
-                                        ),
-                                        Text(
-                                          "${lacation.city}, ${lacation.country}",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleSmall!
-                                              .copyWith(color: AppColor.grey),
-                                        ),
-                                      ],
-                                    ),
-                                    DecoratedBox(
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: AppColor.black,
-                                            blurRadius: 8,
-                                            offset: const Offset(0, 4),
-                                          ),
-                                        ],
-                                      ),
-                                      child: CircleAvatar(
-                                        radius: 50,
-                                        backgroundImage: NetworkImage(
-                                          lacation.imgUrl,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                            child: BlocBuilder<
+                              ChooseLocationCubit,
+                              ChooseLocationState
+                            >(
+                              bloc: cubit,
+                              buildWhen:
+                                  (previous, current) =>
+                                      current is LocationChosen,
+                              builder: (context, state) {
+                                if (state is LocationChosen) {
+                                  final chosenLocation = state.location;
+                                  return LocationItemWidget(
+                                    onTap: () {
+                                      cubit.selectedLocation(location.id);
+                                    },
+                                    location: location,
+                                    borderColor:
+                                        chosenLocation.id == location.id
+                                            ? AppColor.primary
+                                            : AppColor.grey,
+                                  );
+                                }
+                                return LocationItemWidget(
+                                  onTap: () {
+                                    cubit.selectedLocation(location.id);
+                                  },
+                                  location: location,
+                                );
+                              },
                             ),
                           );
                         },
@@ -183,7 +166,27 @@ class _ChooseLocationPageState extends State<ChooseLocationPage> {
                     }
                   },
                 ),
-                MainBotton(text: "Confrim", onTap: () {}),
+                BlocBuilder<ChooseLocationCubit, ChooseLocationState>(
+                  bloc: cubit, 
+                  buildWhen:(previous, current) =>
+                   current is ConfrimAdressLoading ||
+                   current is ConfrimAdressFailure ||
+                   current is ConfrimAdressLoaded, 
+                      
+                  builder: (context, state) {
+                    if(state is ConfrimAdressLoading) {
+                      return MainBotton(
+                     isLoading: true,
+                    );
+                    } 
+                    return MainBotton(
+                      text: "Confrim",
+                      onTap: () {
+                        cubit.confrimAdress();
+                      },
+                    );
+                  },
+                ),
               ],
             ),
           ),

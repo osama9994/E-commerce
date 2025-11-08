@@ -23,3 +23,19 @@ final class LocationAddednFailure extends ChooseLocationState {
   final String errorMessage;
   LocationAddednFailure({required this.errorMessage});
 }
+
+final class LocationChosen extends ChooseLocationState {
+  final LocationItemModel location;
+  LocationChosen({required this.location});
+}
+
+
+
+final class ConfrimAdressLoading extends ChooseLocationState {}
+final class ConfrimAdressLoaded extends ChooseLocationState {
+ 
+}
+final class ConfrimAdressFailure extends ChooseLocationState {
+  final String errorMessage;
+  ConfrimAdressFailure({required this.errorMessage});
+}

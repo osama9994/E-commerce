@@ -25,7 +25,6 @@ class AppRouter {
           builder: (_) => const LoginPage(),
           settings: settings,
         );
-      case AppRoutes.addNewCardRoute:
       case AppRoutes.registerRoute:
         return MaterialPageRoute(
           builder: (_) => const RegisterPage(),
