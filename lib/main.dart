@@ -1,9 +1,11 @@
 import 'package:animation_project/utils/app_router.dart';
 import 'package:animation_project/utils/app_routes.dart';
-
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  Firebase.initializeApp();
   runApp(const MyApp());
 }
 
