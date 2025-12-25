@@ -1,9 +1,11 @@
 import 'package:animation_project/utils/app_color.dart';
 import 'package:animation_project/utils/app_routes.dart';
+import 'package:animation_project/view_models/auth_cubit/auth_cubit.dart';
 import 'package:animation_project/views/widgets/label_with_textfield.dart';
 import 'package:animation_project/views/widgets/main_botton.dart';
 import 'package:animation_project/views/widgets/social_media_botton.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -18,19 +20,23 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
+    final cubit = BlocProvider.of<AuthCubit>(context);
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
-          
+
             child: Form(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 50),
-                  Text("Login Account", style: TextTheme.of(context).titleLarge),
+                  Text(
+                    "Login Account",
+                    style: TextTheme.of(context).titleLarge,
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     "Please Login with registered account",
@@ -51,10 +57,13 @@ class _LoginPageState extends State<LoginPage> {
                     prefixIcon: Icons.password,
                     hintText: "Enter your password",
                     obscureText: true,
-                    suffixIcon: IconButton(icon:const Icon( Icons.visibility), onPressed: () {}),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.visibility),
+                      onPressed: () {},
+                    ),
                     controller: passwordController,
                   ),
-              
+
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
@@ -68,11 +77,45 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  MainBotton(text: "Lgoin", onTap: () {
-                    if(_formKey.currentState!.validate()){
-                      Navigator.pushNamed(context, AppRoutes.homeRoute);
-                    }
-                  }),
+                  BlocConsumer<AuthCubit, AuthState>(
+                    bloc: cubit,
+                    listenWhen: (previous, current) =>current is AuthDone ||current is AuthError,
+                   
+                    listener: (context, state) {
+                      if(state is AuthDone){
+                         Navigator.pushNamed(context, AppRoutes.homeRoute);
+
+                      }else if(state is AuthError){
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(state.message),
+                          ),
+                        );
+                      }
+                     
+                    },
+                     buildWhen: (previous, current) => current is AuthLoading ||current is AuthError||current is AuthDone,
+                    builder: (context, state) {
+                      if(state is AuthLoading){
+                         return MainBotton(
+                        isLoading: true,
+                       
+                      );
+                      }
+                      return MainBotton(
+                        text: "Lgoin",
+                        onTap: () async {
+                          if (_formKey.currentState!.validate()) {
+                            await cubit.loginWithEmailAndPassowrd(
+                              emailController.text,
+                              passwordController.text,
+                            );
+                            
+                          }
+                        },
+                      );
+                    },
+                  ),
                   const SizedBox(height: 8),
                   Align(
                     alignment: Alignment.center,
@@ -80,7 +123,10 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         TextButton(
                           onPressed: () {
-                            Navigator.pushNamed(context, AppRoutes.registerRoute);
+                            Navigator.pushNamed(
+                              context,
+                              AppRoutes.registerRoute,
+                            );
                           },
                           child: Text(
                             "Don't have an account? Register",
@@ -106,7 +152,7 @@ class _LoginPageState extends State<LoginPage> {
                         const SizedBox(height: 16),
                         SocialMediaBotton(
                           text: "Login with Facebook",
-                         icon: Icons.facebook,
+                          icon: Icons.facebook,
                           ontap: () {},
                         ),
                       ],

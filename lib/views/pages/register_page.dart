@@ -1,9 +1,12 @@
+
 import 'package:animation_project/utils/app_color.dart';
 import 'package:animation_project/utils/app_routes.dart';
+import 'package:animation_project/view_models/auth_cubit/auth_cubit.dart';
 import 'package:animation_project/views/widgets/label_with_textfield.dart';
 import 'package:animation_project/views/widgets/main_botton.dart';
 import 'package:animation_project/views/widgets/social_media_botton.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -19,19 +22,23 @@ class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
+    final cubit = BlocProvider.of<AuthCubit>(context);
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
-          
+
             child: Form(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 50),
-                  Text("Create Account", style: TextTheme.of(context).titleLarge),
+                  Text(
+                    "Create Account",
+                    style: TextTheme.of(context).titleLarge,
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     "Start shopping with create your account",
@@ -59,17 +66,50 @@ class _RegisterPageState extends State<RegisterPage> {
                     prefixIcon: Icons.password,
                     hintText: "Enter your password",
                     obscureText: true,
-                    suffixIcon: IconButton(icon:const Icon( Icons.visibility), onPressed: () {}),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.visibility),
+                      onPressed: () {},
+                    ),
                     controller: passwordController,
                   ),
-              
-                 
+
                   const SizedBox(height: 40),
-                  MainBotton(text: "Create Account", onTap: () {
-                    if(_formKey.currentState!.validate()){
-                       Navigator.pushNamed(context, AppRoutes.homeRoute);
-                    }
-                  }),
+                  BlocConsumer<AuthCubit, AuthState>(
+                    bloc: cubit,
+                    listenWhen: (previous, current) => current is AuthDone||current is AuthError,
+                    listener: (context, state) {
+                      if (state is AuthDone) {
+                        Navigator.pushNamed(context, AppRoutes.homeRoute);
+                      }else if(state is AuthError){
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(state.message),
+                          ),
+                        );
+                      }
+                    },
+                    buildWhen:
+                        (previous, current) =>
+                            current is AuthLoading ||
+                            current is AuthError ||
+                            current is AuthDone,
+                    builder: (context, state) {
+                      if (state is AuthLoading) {
+                        return MainBotton(isLoading: true);
+                      }
+                      return MainBotton(
+                        text: "Create Account",
+                        onTap: () async {
+                          if (_formKey.currentState!.validate()) {
+                            await cubit.registerWithEmailAndPassowrd(
+                              emailController.text,
+                              passwordController.text,
+                            );
+                          }
+                        },
+                      );
+                    },
+                  ),
                   const SizedBox(height: 8),
                   Align(
                     alignment: Alignment.center,
@@ -103,7 +143,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         const SizedBox(height: 16),
                         SocialMediaBotton(
                           text: "Sign up with Facebook",
-                         icon: Icons.facebook,
+                          icon: Icons.facebook,
                           ontap: () {},
                         ),
                       ],
