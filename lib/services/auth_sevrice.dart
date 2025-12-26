@@ -1,49 +1,71 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'package:google_sign_in/google_sign_in.dart';
 
-abstract class AuthServices{
- 
-  Future<bool> loginWithEmailAndPassowrd(String email,String password);
-  Future<bool> registerWithEmailAndPassowrd(String email,String password);
+abstract class AuthServices {
+  Future<bool> loginWithEmailAndPassowrd(String email, String password);
+  Future<bool> registerWithEmailAndPassowrd(String email, String password);
+  Future<bool> authenticateWithGoogle();
   User? curretnUser();
   Future<void> logout();
-
 }
 
-class AuthServicesImpl implements AuthServices{
-  final _firebaseAuth=FirebaseAuth.instance;
+class AuthServicesImpl implements AuthServices {
+  final _firebaseAuth = FirebaseAuth.instance;
   @override
-  Future<bool> loginWithEmailAndPassowrd(String email, String password) async{
-  final userCredential= await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
-   final user= userCredential.user;
-   if(user!=null){
-    return true;
-   }
-   else {return false;}
-}
-  @override
-  Future<bool> registerWithEmailAndPassowrd(String email, String password)async{
-   final userCredential= await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
-   final user=userCredential.user;
-   if(user != null)
-   {return true;}
-   else{return false;}
-
-    
+  Future<bool> loginWithEmailAndPassowrd(String email, String password) async {
+    final userCredential = await _firebaseAuth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    final user = userCredential.user;
+    if (user != null) {
+      return true;
+    } else {
+      return false;
+    }
   }
-  
+
+  @override
+  Future<bool> registerWithEmailAndPassowrd(
+    String email,
+    String password,
+  ) async {
+    final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    final user = userCredential.user;
+    if (user != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   @override
   User? curretnUser() {
-   return _firebaseAuth.currentUser;
+    return _firebaseAuth.currentUser;
   }
-  
+
   @override
-  Future<void> logout() async{
+  Future<void> logout() async {
     await _firebaseAuth.signOut();
-    
   }
 
-  
-
+  @override
+  Future<bool> authenticateWithGoogle() async {
+    final gUser = await GoogleSignIn().signIn();
+    final gAuth = await gUser?.authentication;
+    final credential = GoogleAuthProvider.credential(
+      accessToken: gAuth?.accessToken,
+      idToken: gAuth?.idToken,
+    );
+    final UserCredential = await _firebaseAuth.signInWithCredential(credential);
+    if (UserCredential != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
-

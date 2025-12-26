@@ -51,4 +51,18 @@ Future<void> logout() async {
     }
   }
 
+  Future<void> authenticateWithGoogle() async {
+    emit(GoogleAuthenticating());
+    try {
+      final result = await authServices.authenticateWithGoogle();
+      if (result) {
+        emit(const GoogleAuthDone());
+      } else {
+        emit(GoogleAuthError("Google Authentication Failed"));
+      }
+    } catch (e) {
+      emit(GoogleAuthError(e.toString()));
+    }
+  }
+
 }
