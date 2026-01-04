@@ -1,11 +1,9 @@
-
 import 'package:animation_project/utils/app_router.dart';
 import 'package:animation_project/utils/app_routes.dart';
 import 'package:animation_project/view_models/auth_cubit/auth_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'firebase_options.dart';
 
 void main() async {

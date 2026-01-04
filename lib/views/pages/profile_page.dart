@@ -19,7 +19,7 @@ class ProfilePage extends StatelessWidget {
             listenWhen: (previous, current) =>  current is AuthLoggedOut || current is AuthLogOutError,
             listener: (context, state) {
              if(state is AuthLoggedOut){
-               Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.loginRoute,(route)=>false);
+               Navigator.of(context,rootNavigator: true).pushNamedAndRemoveUntil(AppRoutes.loginRoute,(route)=>false);
               }
               else if(state is AuthLogOutError){
                 ScaffoldMessenger.of(context).showSnackBar(

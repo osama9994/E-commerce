@@ -23,7 +23,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.animation_project"
-        minSdk = flutter.minSdkVersion
+        minSdk = localProperties.getProperty("flutter.minSdkVersion")?.toInt()
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

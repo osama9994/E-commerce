@@ -79,28 +79,27 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 12),
                   BlocConsumer<AuthCubit, AuthState>(
                     bloc: cubit,
-                    listenWhen: (previous, current) =>current is AuthDone ||current is AuthError,
-                   
-                    listener: (context, state) {
-                      if(state is AuthDone){
-                         Navigator.pushNamed(context, AppRoutes.homeRoute);
+                    listenWhen:
+                        (previous, current) =>
+                            current is AuthDone || current is AuthError,
 
-                      }else if(state is AuthError){
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(state.message),
-                          ),
-                        );
+                    listener: (context, state) {
+                      if (state is AuthDone) {
+                        Navigator.pushNamed(context, AppRoutes.homeRoute);
+                      } else if (state is AuthError) {
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text(state.message)));
                       }
-                     
                     },
-                     buildWhen: (previous, current) => current is AuthLoading ||current is AuthError||current is AuthDone,
+                    buildWhen:
+                        (previous, current) =>
+                            current is AuthLoading ||
+                            current is AuthError ||
+                            current is AuthDone,
                     builder: (context, state) {
-                      if(state is AuthLoading){
-                         return MainBotton(
-                        isLoading: true,
-                       
-                      );
+                      if (state is AuthLoading) {
+                        return MainBotton(isLoading: true);
                       }
                       return MainBotton(
                         text: "Lgoin",
@@ -110,7 +109,6 @@ class _LoginPageState extends State<LoginPage> {
                               emailController.text,
                               passwordController.text,
                             );
-                            
                           }
                         },
                       );
@@ -144,10 +142,36 @@ class _LoginPageState extends State<LoginPage> {
                           ).labelLarge!.copyWith(color: AppColor.grey),
                         ),
                         const SizedBox(height: 16),
-                        SocialMediaBotton(
-                          text: "Login with Google",
-                          icon: Icons.g_mobiledata,
-                          ontap: () {},
+                        BlocConsumer<AuthCubit, AuthState>(
+                          bloc: cubit,
+                          listenWhen: (previous, current) => current is GoogleAuthDone || current is GoogleAuthError,
+                          listener: (context, state) {
+                           if(state is GoogleAuthDone){
+                            Navigator.pushNamed(context, AppRoutes.homeRoute);
+                           } else if(state is GoogleAuthError){
+                            ScaffoldMessenger.of(
+                              context,
+                            ).showSnackBar(SnackBar(content: Text(state.message)));
+                           }
+                          },
+                          buildWhen: (previous, current) => current is GoogleAuthenticating || current is GoogleAuthError || current is GoogleAuthDone,
+                          builder: (context, state) {
+                            if(state is GoogleAuthenticating){
+                              return SocialMediaBotton(
+                                isLoading: true,
+                                text: "Login with Google",
+                                icon: Icons.g_mobiledata,
+                                ontap: () {},
+                              );
+                            }
+                            return SocialMediaBotton(
+                              text: "Login with Google",
+                              icon: Icons.g_mobiledata,
+                              ontap:
+                                  () async =>
+                                      await cubit.authenticateWithGoogle(),
+                            );
+                          },
                         ),
                         const SizedBox(height: 16),
                         SocialMediaBotton(
