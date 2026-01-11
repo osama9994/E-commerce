@@ -1,68 +1,150 @@
+import 'package:animation_project/models/user_data.dart';
 import 'package:animation_project/services/auth_sevrice.dart';
+import 'package:animation_project/services/firestore_services.dart';
+import 'package:animation_project/utils/api_pathes.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-part 'auth_state.dart';
 
+part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitial());
-  final AuthServices authServices=AuthServicesImpl();
-  Future<void> loginWithEmailAndPassowrd(String email, String password) async {
+
+  final AuthServices _authServices = AuthServicesImpl();
+  final FirestoreServices _firestoreServices =
+      FirestoreServices.instance;
+
+  // =========================
+  // REGISTER
+  // =========================
+  Future<void> registerWithEmailAndPassword({
+    required String email,
+    required String password,
+    required String username,
+  }) async {
     emit(AuthLoading());
+
     try {
-    final result= await authServices.loginWithEmailAndPassowrd(email, password);
-      if(result){
-        emit(AuthDone());
-      }else{
-        emit(AuthError("Login Failed"));
+      final bool result =
+          await _authServices.registerWithEmailAndPassowrd(
+        email,
+        password,
+        username,
+      );
+
+      if (!result) {
+        emit(AuthError('Registration failed'));
+        return;
       }
-      
-    } catch (e) {
-      emit(AuthError(e.toString()));
-    }
-  }
-  Future<void> registerWithEmailAndPassowrd(String email, String password) async {
-    emit(AuthLoading());
-    try {
-    final result= await authServices.registerWithEmailAndPassowrd(email, password);
-      if(result){
-        emit(AuthDone());
-      }else{
-        emit(AuthError("Registration Failed"));
-      }
-      
-    } catch (e) {
-      emit(AuthError(e.toString()));
-    }
-  }
-  void checkAuth(){
-    final user=authServices.curretnUser();
-    if(user !=null){
+
+      await _saveUserData(
+        email: email,
+        username: username,
+      );
+
       emit(const AuthDone());
+    } catch (e) {
+      emit(AuthError(e.toString()));
     }
   }
 
-Future<void> logout() async {
-    emit(AuthLogingOut());
+  // =========================
+  // LOGIN
+  // =========================
+  Future<void> loginWithEmailAndPassword({
+    required String email,
+    required String password,
+  }) async {
+    emit(AuthLoading());
+
     try {
-      await authServices.logout();
+      final bool result =
+          await _authServices.loginWithEmailAndPassowrd(
+        email,
+        password,
+      );
+
+      if (result) {
+        emit(const AuthDone());
+      } else {
+        emit(AuthError('Login failed'));
+      }
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
+
+  // =========================
+  // SAVE USER DATA (Firestore)
+  // =========================
+  Future<void> _saveUserData({
+    required String email,
+    required String username,
+  }) async {
+    final user = _authServices.curretnUser();
+
+    if (user == null) {
+      throw Exception('User not found');
+    }
+
+    final userData = UserData(
+      id: user.uid,
+      email: email,
+      username: username,
+      createdAt: DateTime.now(),
+    );
+
+    await _firestoreServices.setData(
+      path: ApiPathes.users(user.uid),
+      data: userData.toMap(),
+    );
+  }
+
+  // =========================
+  // CHECK AUTH STATE
+  // =========================
+  void checkAuth() {
+    final user = _authServices.curretnUser();
+    if (user != null) {
+      emit(const AuthDone());
+    } else {
+      emit(AuthInitial());
+    }
+  }
+
+  // =========================
+  // LOGOUT
+  // =========================
+  Future<void> logout() async {
+    emit(AuthLogingOut());
+
+    try {
+      await _authServices.logout();
       emit(const AuthLoggedOut());
     } catch (e) {
       emit(AuthLogOutError(e.toString()));
     }
   }
 
-  Future<void> authenticateWithGoogle() async {
-    emit(GoogleAuthenticating());
+  // =========================
+  // GOOGLE SIGN IN
+  // =========================
+  Future<void> signInWithGoogle() async {
+    emit(const GoogleAuthenticating());
+
     try {
-      final result = await authServices.authenticateWithGoogle();
-      if (result) {
-        emit(const GoogleAuthDone());
-      } else {
-        emit(GoogleAuthError("Google Authentication Failed"));
+      final bool result =
+          await _authServices.authenticateWithGoogle();
+
+      if (!result) {
+        emit(GoogleAuthError('Google sign-in failed'));
+        return;
       }
+
+      // OPTIONAL:
+      // يمكنك هنا التحقق هل المستخدم موجود في Firestore أم لا
+      emit(const GoogleAuthDone());
     } catch (e) {
       emit(GoogleAuthError(e.toString()));
     }
   }
-
 }

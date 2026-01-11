@@ -1,4 +1,3 @@
-
 import 'package:animation_project/utils/app_color.dart';
 import 'package:animation_project/utils/app_routes.dart';
 import 'package:animation_project/view_models/auth_cubit/auth_cubit.dart';
@@ -16,138 +15,199 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final emailController = TextEditingController();
-  final usernameController = TextEditingController();
-  final passwordController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    usernameController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final cubit = BlocProvider.of<AuthCubit>(context);
+    final AuthCubit cubit = context.read<AuthCubit>();
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
-
             child: Form(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 50),
+
+                  /// Title
                   Text(
                     "Create Account",
-                    style: TextTheme.of(context).titleLarge,
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 8),
+
                   Text(
-                    "Start shopping with create your account",
-                    style: TextTheme.of(
-                      context,
-                    ).labelLarge!.copyWith(color: AppColor.grey),
+                    "Start shopping by creating your account",
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelLarge!
+                        .copyWith(color: AppColor.grey),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 24),
+
+                  /// Username
                   LabelWithTextfield(
                     label: "Username",
                     prefixIcon: Icons.person,
                     hintText: "Enter your username",
                     controller: usernameController,
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 16),
+
+                  /// Email
                   LabelWithTextfield(
                     label: "Email",
-                    prefixIcon: Icons.person,
-                    hintText: "Enter your Email",
+                    prefixIcon: Icons.email,
+                    hintText: "Enter your email",
                     controller: emailController,
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
+
+                  /// Password
                   LabelWithTextfield(
                     label: "Password",
-                    prefixIcon: Icons.password,
+                    prefixIcon: Icons.lock,
                     hintText: "Enter your password",
                     obscureText: true,
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.visibility),
-                      onPressed: () {},
-                    ),
                     controller: passwordController,
                   ),
+                  const SizedBox(height: 32),
 
-                  const SizedBox(height: 40),
+                  /// Register Button
                   BlocConsumer<AuthCubit, AuthState>(
-                    bloc: cubit,
-                    listenWhen: (previous, current) => current is AuthDone||current is AuthError,
+                    listenWhen: (previous, current) =>
+                        current is AuthDone || current is AuthError,
                     listener: (context, state) {
                       if (state is AuthDone) {
-                        Navigator.pushNamed(context, AppRoutes.homeRoute);
-                      }else if(state is AuthError){
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          AppRoutes.homeRoute,
+                          (route) => false,
+                        );
+                      } else if (state is AuthError) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(state.message),
-                          ),
+                          SnackBar(content: Text(state.message)),
                         );
                       }
                     },
-                    buildWhen:
-                        (previous, current) =>
-                            current is AuthLoading ||
-                            current is AuthError ||
-                            current is AuthDone,
+                    buildWhen: (previous, current) =>
+                        current is AuthLoading ||
+                        current is AuthDone ||
+                        current is AuthError,
                     builder: (context, state) {
                       if (state is AuthLoading) {
-                        return MainBotton(isLoading: true);
+                        return  MainBotton(isLoading: true);
                       }
+
                       return MainBotton(
                         text: "Create Account",
                         onTap: () async {
                           if (_formKey.currentState!.validate()) {
-                            await cubit.registerWithEmailAndPassowrd(
-                              emailController.text,
-                              passwordController.text,
+                            await cubit.registerWithEmailAndPassword(
+                              email: emailController.text.trim(),
+                              password: passwordController.text.trim(),
+                              username: usernameController.text.trim(),
                             );
                           }
                         },
                       );
                     },
                   ),
-                  const SizedBox(height: 8),
+
+                  const SizedBox(height: 16),
+
+                  /// Go to Login
                   Align(
                     alignment: Alignment.center,
-                    child: Column(
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text(
-                            "You have an account? Login",
-                            style: TextTheme.of(
-                              context,
-                            ).labelLarge!.copyWith(color: AppColor.primary),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          "Or using other methods",
-                          textAlign: TextAlign.center,
-                          style: TextTheme.of(
-                            context,
-                          ).labelLarge!.copyWith(color: AppColor.grey),
-                        ),
-                        const SizedBox(height: 16),
-                        SocialMediaBotton(
+                    child: TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text(
+                        "Already have an account? Login",
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelLarge!
+                            .copyWith(color: AppColor.primary),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  /// Divider Text
+                  Text(
+                    "Or sign up using",
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelLarge!
+                        .copyWith(color: AppColor.grey),
+                  ),
+                  const SizedBox(height: 16),
+
+                  /// Google Sign Up
+                  BlocConsumer<AuthCubit, AuthState>(
+                    listenWhen: (p, c) =>
+                        c is GoogleAuthDone || c is GoogleAuthError,
+                    listener: (context, state) {
+                      if (state is GoogleAuthDone) {
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          AppRoutes.homeRoute,
+                          (route) => false,
+                        );
+                      } else if (state is GoogleAuthError) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(state.message)),
+                        );
+                      }
+                    },
+                    buildWhen: (p, c) =>
+                        c is GoogleAuthenticating ||
+                        c is GoogleAuthDone ||
+                        c is GoogleAuthError,
+                    builder: (context, state) {
+                      if (state is GoogleAuthenticating) {
+                        return  SocialMediaBotton(
+                          isLoading: true,
                           text: "Sign up with Google",
                           icon: Icons.g_mobiledata,
-                          ontap: () {},
-                        ),
-                        const SizedBox(height: 16),
-                        SocialMediaBotton(
-                          text: "Sign up with Facebook",
-                          icon: Icons.facebook,
-                          ontap: () {},
-                        ),
-                      ],
-                    ),
+                          ontap: null,
+                        );
+                      }
+
+                      return SocialMediaBotton(
+                        text: "Sign up with Google",
+                        icon: Icons.g_mobiledata,
+                        ontap: () async {
+                          await cubit.signInWithGoogle();
+                        },
+                      );
+                    },
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  /// Facebook (placeholder)
+                  SocialMediaBotton(
+                    text: "Sign up with Facebook",
+                    icon: Icons.facebook,
+                    ontap: () {},
                   ),
                 ],
               ),
