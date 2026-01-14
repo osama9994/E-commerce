@@ -1,32 +1,85 @@
+
+
+// class HomeCarouselItemModel {
+// final String id;
+// final String imgUrl;
+
+//   HomeCarouselItemModel({required this.id, required this.imgUrl});
+
+// }
+
+
+// List<HomeCarouselItemModel> dummyHomeCarouselItems = [
+//   HomeCarouselItemModel(
+//     id: 'jf385EsSP2RzdIKucgW7',
+//     imgUrl:
+//         'images/carousel_image/Screenshot 2025-10-03 181806.png',
+//   ),
+//   HomeCarouselItemModel(
+//     id: 'btgMW23JED1zRsxqdKms',
+//     imgUrl:
+//         'images/carousel_image/Screenshot 2025-10-03 181825.png',
+//   ),
+//   HomeCarouselItemModel(
+//     id: 'XjZBor795dLTO2ErQGi3',
+//     imgUrl:
+//         'images/carousel_image/Screenshot 2025-10-03 181846.png',
+//   ),
+//   HomeCarouselItemModel(
+//     id: '8u3jP9mBZYVSGq7JGoc6',
+//     imgUrl:
+//         'images/carousel_image/Screenshot 2025-10-03 181904.png',
+//   ),
+// ];
+
 class HomeCarouselItemModel {
-final String id;
-final String imgUrl;
+  final String id;
+  final String imgUrl;
 
-  HomeCarouselItemModel({required this.id, required this.imgUrl});
+  HomeCarouselItemModel({
+    required this.id,
+    required this.imgUrl,
+  });
 
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'id': id,
+      'imgUrl': imgUrl,
+    };
+  }
+
+  factory HomeCarouselItemModel.fromMap(
+    Map<String, dynamic> map, {
+    String? documentId,
+  }) {
+    return HomeCarouselItemModel(
+      id: map['id'] as String? ?? documentId ?? '',
+      imgUrl: map['imgUrl'] as String,
+    );
+  }
+
+ 
 }
-
 
 List<HomeCarouselItemModel> dummyHomeCarouselItems = [
   HomeCarouselItemModel(
     id: 'jf385EsSP2RzdIKucgW7',
     imgUrl:
-        'images/carousel_image/Screenshot 2025-10-03 181806.png',
+        'https://edit.org/photos/img/blog/mbp-template-banner-online-store-free.jpg-840.jpg',
   ),
   HomeCarouselItemModel(
     id: 'btgMW23JED1zRsxqdKms',
     imgUrl:
-        'images/carousel_image/Screenshot 2025-10-03 181825.png',
+        'https://casalsonline.es/wp-content/uploads/2018/12/CASALS-ONLINE-18-DICIEMBRE.png',
   ),
   HomeCarouselItemModel(
     id: 'XjZBor795dLTO2ErQGi3',
     imgUrl:
-        'images/carousel_image/Screenshot 2025-10-03 181846.png',
+        'https://e0.pxfuel.com/wallpapers/606/84/desktop-wallpaper-ecommerce-website-design-company-noida-e-commerce-banner-design-e-commerce.jpg',
   ),
   HomeCarouselItemModel(
     id: '8u3jP9mBZYVSGq7JGoc6',
     imgUrl:
-        'images/carousel_image/Screenshot 2025-10-03 181904.png',
+        'https://marketplace.canva.com/EAFMdLQAxDU/1/0/1600w/canva-white-and-gray-modern-real-estate-modern-home-banner-NpQukS8X1oo.jpg',
   ),
 ];
-

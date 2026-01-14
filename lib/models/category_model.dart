@@ -1,7 +1,8 @@
 
 
-import 'package:animation_project/utils/app_color.dart';
 import 'package:flutter/material.dart';
+
+import 'package:animation_project/utils/app_color.dart';
 
 class CategoryModel {
 final String id;
@@ -19,6 +20,33 @@ final Color textColor;
       
       });
 
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'id': id,
+      'name': name,
+      'productsCount': productsCount,
+      // ignore: deprecated_member_use
+      'bgColor': bgColor.value,
+      // ignore: deprecated_member_use
+      'textColor': textColor.value,
+    };
+  }
+
+  factory CategoryModel.fromMap(
+    Map<String, dynamic> map, {
+    String? documentId,
+  }) {
+    return CategoryModel(
+      id: map['id'] ?? documentId ?? "",
+      name: map['name'] ??"",
+      productsCount: map['productsCount']??0,
+      bgColor: Color(map['bgColor'] ),
+      textColor: Color(map['textColor'] ),
+    );
+  }
+
+ 
 }
 
 List<CategoryModel>dummyCategories=[
