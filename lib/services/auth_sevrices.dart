@@ -10,7 +10,7 @@ abstract class AuthServices {
     String username,
   );
   Future<bool> authenticateWithGoogle();
-  User? curretnUser();
+  User? currentUser();
   Future<void> logout();
 }
 
@@ -64,7 +64,7 @@ class AuthServicesImpl implements AuthServices {
 
   /// CURRENT USER
   @override
-  User? curretnUser() => _firebaseAuth.currentUser;
+  User? currentUser() => _firebaseAuth.currentUser;
 
   /// LOGOUT
   @override

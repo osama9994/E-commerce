@@ -2,6 +2,7 @@
 import 'package:animation_project/utils/app_routes.dart';
 import 'package:animation_project/view_models/home_cubit/home_cubit.dart';
 import 'package:animation_project/views/widgets/product_item.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
@@ -21,6 +22,7 @@ class HomeTabView extends StatelessWidget {
         if (state is HomeLoading) {
           return const Center(child: CircularProgressIndicator.adaptive());
         } else if (state is HomeLoaded) {
+          debugPrint('Displaying ${state.product.length} products');
           return SingleChildScrollView(
             child: Column(
               children: [

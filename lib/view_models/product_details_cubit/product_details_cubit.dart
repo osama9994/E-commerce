@@ -1,5 +1,7 @@
 import 'package:animation_project/models/add_to_cart_model.dart';
 import 'package:animation_project/models/product_item_model.dart';
+import 'package:animation_project/services/auth_sevrices.dart';
+import 'package:animation_project/services/product_details_services.dart';
 
 // ignore: depend_on_referenced_packages
 import 'package:bloc/bloc.dart';
@@ -11,13 +13,22 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
   
    ProductSize? selectedsize;
    int quantity=1;
+   final productDetailsServices=ProductDetailsServicesImpl();
+   final authServices=AuthServicesImpl();
 
-  void getProductDetails(String id) {
+  void getProductDetails(String id)async {
     emit(ProductDetailsLoading());
-    Future.delayed(Duration(seconds: 1), () {
-      final selectedProduct = dummyProducts.firstWhere((item) => item.id == id);
-      emit(ProductDetailsLoaded(product: selectedProduct));
-    });
+    try{
+      final selectedProduct= await productDetailsServices.fetchProductDetails(id);
+     emit(ProductDetailsLoaded(product: selectedProduct));
+    }
+    catch(e){
+      emit(ProductDetailsError( e.toString()));
+    }
+    // Future.delayed(Duration(seconds: 1), () {
+    //   final selectedProduct = dummyProducts.firstWhere((item) => item.id == id);
+    //   emit(ProductDetailsLoaded(product: selectedProduct));
+    // });
   }
 
 
@@ -26,18 +37,26 @@ void selectedSize(ProductSize size){
 emit(SizeSelected(size: size));
 }  
 
-void addToCart(String productId,){
+Future<void> addToCart(String productId,)async{
   emit(ProductAddingToCart());
-  final  cartItem=AddToCartModel(
+  try{
+          final selectedProduct= await productDetailsServices.fetchProductDetails(productId);
+ final currentUser=authServices.currentUser();
+ final  cartItem=AddToCartModel(
     id:DateTime.now().toIso8601String(),
-    product: dummyProducts.firstWhere((item) => item.id == productId),
+    product: selectedProduct,
     size: selectedsize!,
     quantity: quantity
   );
-  dummyCart.add(cartItem);
-  Future.delayed(const Duration(seconds: 1),(){
-    emit(ProductAddedToCart(productId: productId));
-  });
+  await productDetailsServices.addToCart(cartItem, currentUser!.uid);
+  emit(ProductAddedToCart(productId: productId));
+  }
+  catch(e){
+    emit(PorductAddToCartError(e.toString()));
+  }
+ 
+
+ 
 }
 
 

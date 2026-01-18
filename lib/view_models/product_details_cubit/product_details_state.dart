@@ -16,7 +16,7 @@ final class ProductDetailsLoaded extends ProductDetailsState {
 final class ProductDetailsError extends ProductDetailsState {
   final String message;
 
-  ProductDetailsError({required this.message}); 
+  ProductDetailsError( this.message); 
 }
 
 
@@ -36,7 +36,10 @@ final class SizeSelected extends ProductDetailsState{
 
 final class ProductAddingToCart extends ProductDetailsState{
 }
-
+final class PorductAddToCartError extends ProductDetailsState{
+final String message;
+  PorductAddToCartError( this.message); 
+}
 final class ProductAddedToCart extends ProductDetailsState{
 final String productId;
 

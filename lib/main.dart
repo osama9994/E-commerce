@@ -1,6 +1,7 @@
 import 'package:animation_project/utils/app_router.dart';
 import 'package:animation_project/utils/app_routes.dart';
 import 'package:animation_project/view_models/auth_cubit/auth_cubit.dart';
+import 'package:animation_project/view_models/favorite_cubit/favorite_cubit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,12 +22,26 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<AuthCubit>(
-      create: (context) {
-        final cubit = AuthCubit();
-        cubit.checkAuth();
-        return cubit;
-      },
+    return MultiBlocProvider(
+      providers: [
+       BlocProvider<AuthCubit>(
+        create:(context){
+          final cubit=AuthCubit();
+          cubit.checkAuth();
+          return cubit;
+        } ,
+         ),
+           BlocProvider<FavoriteCubit>(
+        create:(context){
+          final cubit=FavoriteCubit();
+          // Don't load favorites immediately - let the page handle it when user is logged in
+          // This prevents errors when user is not logged in yet
+          return cubit;
+        } ,
+        ),
+      ],
+     
+      
       child: Builder(
         builder: (context) {
           final authCubit = context.read<AuthCubit>();

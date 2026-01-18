@@ -1,5 +1,6 @@
 import 'package:animation_project/models/product_item_model.dart';
 import 'package:animation_project/utils/app_color.dart';
+import 'package:animation_project/view_models/favorite_cubit/favorite_cubit.dart';
 import 'package:animation_project/view_models/home_cubit/home_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,7 +13,23 @@ class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final homeCubit = BlocProvider.of<HomeCubit>(context);
-    return BlocBuilder<HomeCubit, HomeState>(
+    // Listen for SetFavoriteSuccess and refresh FavoriteCubit
+    return BlocListener<HomeCubit, HomeState>(
+      bloc: homeCubit,
+      listenWhen: (previous, current) => current is SetFavoriteSuccess,
+      listener: (context, state) {
+        if (state is SetFavoriteSuccess) {
+          // Refresh FavoriteCubit when a favorite is added/removed
+          try {
+            final favoriteCubit = context.read<FavoriteCubit>();
+            favoriteCubit.getFavoriteProducts();
+          } catch (e) {
+            // FavoriteCubit might not be available in all contexts, ignore error
+            debugPrint('Could not refresh FavoriteCubit: $e');
+          }
+        }
+      },
+      child: BlocBuilder<HomeCubit, HomeState>(
       bloc: homeCubit,
       buildWhen: (previous, current) =>
           current is HomeLoaded ||
@@ -25,21 +42,28 @@ class ProductItem extends StatelessWidget {
               children: [
                 Container(
                   height: 120,
-                  width: 200,
+                  width: double.infinity,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
                     color: AppColor.grey2,
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: CachedNetworkImage(
-                      imageUrl: productItem.imgUrl,
-                      fit: BoxFit.contain,
-                      placeholder: (context, url) =>
-                          const Center(child: CircularProgressIndicator.adaptive()),
-                      errorWidget: (context, url, error) =>
-                          const Icon(Icons.error),
-                    ),
+                    child: productItem.imgUrl.isEmpty
+                        ? const Center(
+                            child: Icon(Icons.image_not_supported, size: 48),
+                          )
+                        : CachedNetworkImage(
+                            imageUrl: productItem.imgUrl,
+                            fit: BoxFit.contain,
+                            placeholder: (context, url) => const Center(
+                                child: CircularProgressIndicator.adaptive()),
+                            errorWidget: (context, url, error) {
+                              debugPrint('Image error for ${productItem.name}: $error');
+                              debugPrint('Image URL: ${productItem.imgUrl}');
+                              return const Icon(Icons.error, size: 48);
+                            },
+                          ),
                   ),
                 ),
                 Positioned(
@@ -108,6 +132,7 @@ class ProductItem extends StatelessWidget {
           ],
         );
       },
+      ),
     );
   }
 }

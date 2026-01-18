@@ -1,5 +1,5 @@
 import 'package:animation_project/models/user_data.dart';
-import 'package:animation_project/services/auth_sevrice.dart';
+import 'package:animation_project/services/auth_sevrices.dart';
 import 'package:animation_project/services/firestore_services.dart';
 import 'package:animation_project/utils/api_pathes.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -80,7 +80,7 @@ class AuthCubit extends Cubit<AuthState> {
     required String email,
     required String username,
   }) async {
-    final user = _authServices.curretnUser();
+    final user = _authServices.currentUser();
 
     if (user == null) {
       throw Exception('User not found');
@@ -94,7 +94,7 @@ class AuthCubit extends Cubit<AuthState> {
     );
 
     await _firestoreServices.setData(
-      path: ApiPathes.users(user.uid),
+      path: ApiPaths.users(user.uid),
       data: userData.toMap(),
     );
   }
@@ -103,7 +103,7 @@ class AuthCubit extends Cubit<AuthState> {
   // CHECK AUTH STATE
   // =========================
   void checkAuth() {
-    final user = _authServices.curretnUser();
+    final user = _authServices.currentUser();
     if (user != null) {
       emit(const AuthDone());
     } else {

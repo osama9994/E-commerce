@@ -53,7 +53,7 @@ class HomeCarouselItemModel {
     String? documentId,
   }) {
     return HomeCarouselItemModel(
-      id: map['id'] as String? ?? documentId ?? '',
+      id: map['id'] ?? documentId ?? '',
       imgUrl: map['imgUrl'] as String,
     );
   }
